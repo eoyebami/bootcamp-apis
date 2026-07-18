@@ -23,13 +23,14 @@ curl -s -X POST \
 
 # Validate new branch
 echo "Validating branch: $new_branch"
-created=$(curl -s -H "Authorization: Bearer $token" \
+validated_branch=$(curl -s -H "Authorization: Bearer $token" \
 	https://api.github.com/repos/$owner/$repo/branches/$new_branch | jq -r '.name')
 
-if [[ "$created" -eq "$new_branch" ]]; then 
+if [[ "$validated_branch" -eq "$new_branch" ]]; then 
    echo "New Branch created successfully and validated."
 else
     echo "Branch creation failed."
+    exit 1
 fi 
 
 # Delete branch
@@ -41,11 +42,12 @@ fi
 
 
 # Check if deleted branch still exist
-created=$(curl -s -H "Authorization: Bearer $token" \
+deleted_branch=$(curl -s -H "Authorization: Bearer $token" \
         https://api.github.com/repos/$owner/$repo/branches/$new_branch | jq -r '.name')
 
-if [[ "$created" -eq "null" ]]; then 
+if [[ "$deleted_branch" -eq "null" ]]; then 
   echo "Branch deleted successfully."
 else
    echo "Branch deleted failed."
+   exit 1
  fi 
