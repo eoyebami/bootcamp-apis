@@ -1,7 +1,7 @@
 #!/bin/bash
 
 read -p "Enter your token: " GITHUB_TOKEN
-
+pr
 echo "Token saved: $GITHUB_TOKEN"
 OWNER="eoyebami"
 REPO="bootcamp-apis"
