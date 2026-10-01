@@ -1,0 +1,42 @@
+
+
+services: 
+  data_playback: 
+    build: 
+      context: . 
+      dockerfile: data_playback/Dockerfile
+    ports: 
+      - "5555:5555"
+    volumes:
+      - ./data:/home/prosper/devops-challenge/data
+    environment: 
+      - DATA_FILE=/home/prosper/devops-challenge/data/output.mp4
+      - PLAYBACK_HOST=*
+      - PLAYBACK_PORT=5555
+
+  data_redactor: 
+    build:
+      context: .
+      dockerfile: data_redactor/Dockerfile
+    depends_on: 
+      - data_playback
+    ports: 
+      - "5556:5556"
+    environment:
+      - PLAYBACK_HOST=data_playback
+      - PLAYBACK_PORT=5555
+      - REDACTOR_HOST=*
+      - REDACTOR_PORT=5556
+      
+  data_visualizer:
+    build:
+      context: . 
+      dockerfile: data_visualizer/Dockerfile
+    depends_on:
+      - data_redactor
+    ports:
+      - "8050:8050"
+    environment:
+      - REDACTOR_HOST=data_redactor
+      - REDACTOR_PORT=5556
+
